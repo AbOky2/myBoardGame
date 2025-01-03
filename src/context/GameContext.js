@@ -29,13 +29,15 @@ export const GameProvider = ({ children }) => {
 
     // Mettre à jour le nombre de pions restants
     if (currentColor === 'WHITE') {
-      newGameState.pionsRestantsBlanc--;
+      newGameState.pionsAPlacerBlanc--;
+      newGameState.pionsSurPlateauBlanc ++;
     } else {
-      newGameState.pionsRestantsNoir--;
+      newGameState.pionsAplacerNoir--;
+      newGameState.pionSurPlateauNoir++;
     }
 
     // Passer en phase MOUVEMENT si tous les pions sont placés
-    if (newGameState.pionsRestantsBlanc === 0 && newGameState.pionsRestantsNoir === 0) {
+    if (newGameState.pionsAPlacerBlanc === 0 && newGameState.pionsAplacerNoir === 0) {
       newGameState.phase = GamePhase.MOVEMENT;
     }
 
@@ -78,12 +80,13 @@ export const GameProvider = ({ children }) => {
     // 5) Vérifier alignement de 3 => retirer un pion adverse si besoin
     if (alignmentChecker(board, currentPlayer)) {
       // Par exemple, tu peux activer un “mode retrait de pion” :
-      newGameState.needToRemoveOpponent = true; 
+      newGameState.needToRemoveOpponentPiece = true; 
       // ou retirer immédiatement un pion adverse (selon tes règles).
     }
-
-    // 6) Changer de joueur
-    newGameState.currentPlayer = (currentPlayer === 'WHITE') ? 'BLACK' : 'WHITE';
+    else {
+      // => Pas d’alignement, on termine le tour normal
+      newGameState.currentPlayer = (currentPlayer === 'WHITE') ? 'BLACK' : 'WHITE';
+    }
 
     // Réinitialiser la sélection
     setSelectedCell(null);
@@ -103,23 +106,28 @@ export const GameProvider = ({ children }) => {
       }
 
     if (needToRemoveOpponentPiece) {
+      console.log("Retrait : currentPlayer =", currentPlayer);
+
         // Vérifier que la case cliquée a un pion adverse
         const clickedPiece = board.grid[row][col];
+        console.log('clickedPiece ?', clickedPiece ? clickedPiece.owner : 'null');
         if (clickedPiece && clickedPiece.owner !== currentPlayer) {
+          console.log("Pion cliqué :", clickedPiece.owner);
+
           // Retirer ce pion
           board.removePiece(row, col);
     
           // Mettre à jour le compteur de pions adverses si nécessaire
           if (clickedPiece.owner === 'WHITE') {
-            newGameState.pionsRestantsBlanc--;
-            if (newGameState.pionsRestantsBlanc <= 0) {
+            newGameState.pionsSurPlateauBlanc--;
+            if (newGameState.pionsSurPlateauBlanc <= 0) {
               // Le joueur NOIR gagne
               newGameState.phase = GamePhase.ENDED;
               newGameState.winner = 'BLACK';
             }
           } else {
-            newGameState.pionsRestantsNoir--;
-            if (newGameState.pionsRestantsNoir <= 0) {
+            newGameState.pionSurPlateauNoir--;
+            if (newGameState.pionSurPlateauNoir <= 0) {
               // Le joueur BLANC gagne
               newGameState.phase = GamePhase.ENDED;
               newGameState.winner = 'WHITE';
@@ -135,6 +143,8 @@ export const GameProvider = ({ children }) => {
           // ...
         }
         setGameState(newGameState);
+        console.log("current game state : ", gameState);
+        console.log("set game state : ", newGameState);
         return;
       }
   

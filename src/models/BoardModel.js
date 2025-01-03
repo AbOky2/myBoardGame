@@ -2,7 +2,7 @@ import { Piece } from './PieceModel';
 
 export class BoardModel {
   static ROWS = 6;
-  static COLS = 5;
+  static COLS = 6;
 
   constructor() {
     this.grid = Array.from({ length: BoardModel.ROWS }, () =>

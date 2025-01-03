@@ -11,20 +11,27 @@ export const GamePhase = {
   
   export class GameState {
     constructor() {
-      this.board = new BoardModel();
+      this.phase = GamePhase.PLACEMENT;
+
+       // Pour la pose initiale
+       this.pionsAPlacerBlanc = 12;
+       this.pionsAplacerNoir = 12;
+ 
+       //Pour la phase de retrait
+       this.pionsSurPlateauBlanc = 0;
+       this.pionSurPlateauNoir = 0;
+    
+      this.currentPlayer = PlayerColor.WHITE;
+       // Pour la phase RETRAIT
+       this.needToRemoveOpponentPiece = false;
+  
+       // Pour la phase ENDED
+       this.winner = null; // 'WHITE' ou 'BLACK' ou 'DRAW'
+
+       this.board = new BoardModel();
       this.player1 = new Player(PlayerColor.WHITE);
       this.player2 = new Player(PlayerColor.BLACK);
-      this.currentPlayer = PlayerColor.WHITE;
-      this.phase = GamePhase.PLACEMENT;
-  
-      this.pionsRestantsBlanc = 12;
-      this.pionsRestantsNoir = 12;
-  
-      // Pour la phase RETRAIT
-      this.needToRemoveOpponentPiece = false;
-  
-      // Pour la phase ENDED
-      this.winner = null; // 'WHITE' ou 'BLACK' ou 'DRAW'
+     
     }
   }
   
