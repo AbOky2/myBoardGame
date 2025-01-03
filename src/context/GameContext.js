@@ -3,6 +3,7 @@ import { GameState, GamePhase } from '../models/GameState';
 import { alignmentChecker } from '../logic/alignmentChecker';
 import { canMove } from '../logic/movementRules'; // si tu as une fonction canMove()
 import { isAdjacent } from '../logic/isAdjacent';   // ou on la définit plus bas
+import { checkLocalAlignment } from '../logic/checkLocalAlignement';
 
 export const GameContext = createContext();
 
@@ -78,7 +79,7 @@ export const GameProvider = ({ children }) => {
     board.movePiece(startRow, startCol, endRow, endCol);
 
     // 5) Vérifier alignement de 3 => retirer un pion adverse si besoin
-    if (alignmentChecker(board, currentPlayer)) {
+    if (checkLocalAlignment(board, endRow, endCol, currentPlayer)) {
       // Par exemple, tu peux activer un “mode retrait de pion” :
       newGameState.needToRemoveOpponentPiece = true; 
       // ou retirer immédiatement un pion adverse (selon tes règles).
