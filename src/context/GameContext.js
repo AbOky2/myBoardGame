@@ -4,6 +4,7 @@ import { alignmentChecker } from '../logic/alignmentChecker';
 import { canMove } from '../logic/movementRules'; // si tu as une fonction canMove()
 import { isAdjacent } from '../logic/isAdjacent';   // ou on la définit plus bas
 import { checkLocalAlignment } from '../logic/checkLocalAlignement';
+import { canPlayerMove } from '../logic/moveDetection';
 
 export const GameContext = createContext();
 
@@ -48,6 +49,22 @@ export const GameProvider = ({ children }) => {
     return true;
   };
 
+  function checkMovesOrEnd(newGameState) {
+    const currentColor = newGameState.currentPlayer;
+    const otherColor = (currentColor === 'WHITE') ? 'BLACK' : 'WHITE';
+  
+    if (!canPlayerMove(newGameState.board, currentColor)) {
+      // Personne ne peut bouger ?
+      if (!canPlayerMove(newGameState.board, otherColor)) {
+        newGameState.phase = 'ENDED';
+        newGameState.winner = 'DRAW';
+      } else {
+        newGameState.phase = 'ENDED';
+        newGameState.winner = otherColor; // l’adversaire gagne
+      }
+    }
+  }
+
   const movePiece = (startRow, startCol, endRow, endCol) => {
     
     // Vérifier que le pion est bien du currentPlayer, etc.
@@ -89,6 +106,9 @@ export const GameProvider = ({ children }) => {
       newGameState.currentPlayer = (currentPlayer === 'WHITE') ? 'BLACK' : 'WHITE';
     }
 
+    //Verfiier si l'adversaire peut bouger
+    checkMovesOrEnd(newGameState);
+
     // Réinitialiser la sélection
     setSelectedCell(null);
     setGameState(newGameState);
@@ -107,13 +127,10 @@ export const GameProvider = ({ children }) => {
       }
 
     if (needToRemoveOpponentPiece) {
-      console.log("Retrait : currentPlayer =", currentPlayer);
 
         // Vérifier que la case cliquée a un pion adverse
         const clickedPiece = board.grid[row][col];
-        console.log('clickedPiece ?', clickedPiece ? clickedPiece.owner : 'null');
         if (clickedPiece && clickedPiece.owner !== currentPlayer) {
-          console.log("Pion cliqué :", clickedPiece.owner);
 
           // Retirer ce pion
           board.removePiece(row, col);
@@ -144,8 +161,6 @@ export const GameProvider = ({ children }) => {
           // ...
         }
         setGameState(newGameState);
-        console.log("current game state : ", gameState);
-        console.log("set game state : ", newGameState);
         return;
       }
   
@@ -155,6 +170,14 @@ export const GameProvider = ({ children }) => {
     }
 
     if (phase === GamePhase.MOVEMENT) {
+          // Vérif si le joueur courant peut bouger
+      if (!canPlayerMove(board, currentPlayer)) {
+        // => On exécute la logique de fin
+        //    Soit l'adversaire gagne, soit match nul si les 2 bloqués
+        checkMovesOrEnd(newGameState); 
+        setGameState(newGameState);
+        return;
+      }
       // 1) S'il n'y a pas encore de pion sélectionné
       if (!selectedCell) {
         const piece = board.grid[row][col];
