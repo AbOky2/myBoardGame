@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 const Piece = ({ piece }) => {
   if (!piece) {
@@ -7,25 +7,11 @@ const Piece = ({ piece }) => {
   }
 
   // Couleur : Blanc ou Noir
-  const colorStyle = piece.owner === 'WHITE' ? styles.whitePiece : styles.blackPiece;
+  const colorClass = piece.owner === 'WHITE' ? 'bg-white' : 'bg-black';
 
   return (
-    <View style={[styles.piece, colorStyle]} />
+    <View className={`w-10 h-10 rounded-full ${colorClass}`} />
   );
 };
-
-const styles = StyleSheet.create({
-  piece: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  whitePiece: {
-    backgroundColor: '#fff',
-  },
-  blackPiece: {
-    backgroundColor: '#000',
-  },
-});
 
 export default Piece;

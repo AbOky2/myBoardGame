@@ -1,6 +1,5 @@
-// Board.js
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { GameContext } from '../context/GameContext';
 import Cell from './Cell';
 
@@ -10,14 +9,14 @@ export default function Board() {
   const currentPlayerText = currentPlayer === 'WHITE' ? 'Blancs' : 'Noirs';
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.playerInfo}>
+    <View className="flex items-center">
+      <Text className="text-lg mb-3">
         Au tour des {currentPlayerText}
       </Text>
 
-      <View style={styles.boardContainer}>
+      <View className="flex flex-col">
         {board.grid.map((rowData, row) => (
-          <View style={styles.row} key={`row-${row}`}>
+          <View className="flex flex-row" key={`row-${row}`}>
             {rowData.map((cellData, col) => (
               <Cell
                 key={`cell-${row}-${col}`}
@@ -33,19 +32,3 @@ export default function Board() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  playerInfo: {
-    fontSize: 18,
-    marginBottom: 12,
-  },
-  boardContainer: {
-    flexDirection: 'column',
-  },
-  row: {
-    flexDirection: 'row',
-  },
-});

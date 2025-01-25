@@ -1,7 +1,5 @@
-// src/components/Cell.js
-
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Piece from './Piece';
 
 const Cell = ({ row, col, piece, onPress }) => {
@@ -16,29 +14,12 @@ const Cell = ({ row, col, piece, onPress }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.cell} onPress={handlePress}>
-      <View style={styles.innerContainer}>
+    <TouchableOpacity className="w-[60] h-[60] bg-[#b58863] border border-[#4b3829] justify-center items-center" onPress={handlePress}>
+      <View className="flex-1 justify-center items-center">
         {piece ? <Piece piece={piece} /> : null}
       </View>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  cell: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#b58863',  // Couleur "échiquier"
-    borderWidth: 1,
-    borderColor: '#4b3829',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-});
 
 export default Cell;
